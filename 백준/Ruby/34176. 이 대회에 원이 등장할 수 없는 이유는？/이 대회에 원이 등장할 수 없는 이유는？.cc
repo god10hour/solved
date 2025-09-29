@@ -229,7 +229,7 @@ struct PGroup {
     vector<Perm> gens;
     vector<int> base;
     vector<vector<int>> orbit, parent, lab, repr;
-    vector<vector<Perm>> strong;
+    vector<vector<Perm>> strong, Glev;
 
     explicit PGroup(int N=0): N(N) {}
 
@@ -257,71 +257,85 @@ struct PGroup {
     }
     static int act(const Perm &g, int x) { return g[x]; }
 
-    void buildOrb(int lvl) {
-        int b=base[lvl];
-        orbit[lvl].clear();
-        parent[lvl].assign(N, -1);
-        lab[lvl].assign(N, -1);
-        repr[lvl].assign(N, -1);
+    void rebuild(int Lv) {
+        if (Glev.size()!=strong.size())
+            Glev.assign(strong.size(), {});
+        int L=Glev.size();
+        for (int i=Lv; i<L; i++) {
+            vector<Perm> P;
+            for (int j=i; j<L; j++)
+                P.insert(P.end(), strong[j].begin(), strong[j].end());
+            Glev[i]=move(P);
+        }
+    }
+
+    void buildOrb(int Lv) {
+        int b=base[Lv];
+        orbit[Lv].clear();
+        parent[Lv].assign(N, -1);
+        lab[Lv].assign(N, -1);
+        repr[Lv].assign(N, -1);
 
         deque<int> dq;
-        orbit[lvl].push_back(b);
-        repr[lvl][b]=0;
+        orbit[Lv].push_back(b);
+        repr[Lv][b]=0;
         dq.push_back(b);
+        const auto &Guse=Glev[Lv];
 
         while (!dq.empty()) {
             int u=dq.front();
             dq.pop_front();
-            for (auto &g: strong[lvl]) {
-                int v=act(g, u);
-                if (repr[lvl][v]==-1) {
-                    repr[lvl][v]=orbit[lvl].size();
-                    orbit[lvl].push_back(v);
-                    parent[lvl][v]=u;
-                    lab[lvl][v]=&g-&strong[lvl][0];
+            for (int g=0; g<Guse.size(); g++) {
+                int v=Guse[g][u];
+                if (repr[Lv][v]==-1) {
+                    repr[Lv][v]=orbit[Lv].size();
+                    orbit[Lv].push_back(v);
+                    parent[Lv][v]=u;
+                    lab[Lv][v]=g;
                     dq.push_back(v);
                 }
             }
         }
     }
 
-    Perm trans(int level, int x) const {
-        if (repr[level][x]==-1) {
+    Perm trans(int Lv, int x) const {
+        if (repr[Lv][x]==-1) {
             Perm id(N);
             iota(id.begin(), id.end(), 0);
             return id;
         }
         vector<int> path;
         int now=x;
-        while (now!=base[level]) {
-            int idx=lab[level][now];
-            path.push_back(idx);
-            now=parent[level][now];
+        while (now!=base[Lv]) {
+            path.push_back(lab[Lv][now]);
+            now=parent[Lv][now];
         }
         Perm t(N);
         iota(t.begin(), t.end(), 0);
         for (int i=path.size()-1; i>=0; i--)
-            t=compose(strong[level][path[i]], t);
+            t=compose(Glev[Lv][path[i]], t);
         return t;
     }
 
     Perm sift(const Perm &g) {
         Perm h=g;
-        for (int lvl=0; lvl<base.size(); lvl++) {
-            int b=base[lvl];
+        for (int Lv=0; Lv<base.size(); Lv++) {
+            int b=base[Lv];
             int y=act(h, b);
-            if (repr[lvl][y]==-1)
+            if (repr[Lv][y]==-1)
                 return h;
-            Perm t=trans(lvl, y);
+            Perm t=trans(Lv, y);
             Perm tinv=inv(t);
             h=compose(tinv, h);
         }
         return h;
     }
 
-    void insert(int lvl, const Perm &g) {
-        strong[lvl].push_back(g);
-        buildOrb(lvl);
+    void insert(int Lv, const Perm &g) {
+        strong[Lv].push_back(g);
+        rebuild(0);
+        for (int i=0; i<base.size(); i++)
+            buildOrb(i);
     }
     void addbase(int bpt) {
         base.push_back(bpt);
@@ -330,6 +344,8 @@ struct PGroup {
         lab.emplace_back(N, -1);
         repr.emplace_back(N, -1);
         strong.emplace_back();
+        Glev.emplace_back();
+        rebuild(base.size()-1);
         buildOrb(base.size()-1);
     }
     void init() {
@@ -339,6 +355,7 @@ struct PGroup {
         lab.clear();
         repr.clear();
         strong.clear();
+        Glev.clear();
         for (int i=0; i<N; i++)
             addbase(i);
     }
@@ -363,7 +380,7 @@ struct PGroup {
                 for (int u: orbit[i]) {
                     Perm t=trans(i, u);
                     Perm tinv=inv(t);
-                    for (auto &s: strong[i]) {
+                    for (auto &s: Glev[i]) {
                         Perm c=compose(compose(tinv, s), t);
                         dq.push_back(c);
                     }
