@@ -12,10 +12,10 @@ int Pow(int64_t n, int k, const int M) {
     return r;
 }
 
-bool tower(const vector<int> &x, int i, double THRESH) {
+bool tower(const vector<int> &x, int i, long double THRESH) {
     if (THRESH<=1.0) return 1;
     if (i>=x.size()) return 1.0>=THRESH;
-    double a=x[i];
+    long double a=x[i];
     if (a<=1.0L) return a>=THRESH;
     return tower(x, i+1, ceil(log(THRESH)/log(a)));
 }
@@ -26,7 +26,7 @@ int main() {
     vector<int> phi(MAX);
     iota(phi.begin(), phi.end(), 0);
     for (int i=2; i<MAX; i++) if (i==phi[i])
-        for (int j=i*2; j<MAX; j+=i)
+        for (int j=i; j<MAX; j+=i)
             phi[j]-=phi[j]/i;
     int t, n, M;
     vector<int> x;
