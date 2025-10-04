@@ -9,9 +9,9 @@ int main() {
     for (int i=0; i<m; i++)
         cin >> k, mem[k]=i;
     vector<pair<int, int>> v(mem.begin(), mem.end());
-    for (int i=0; i<v.size(); i++)
-        swap(v[i].first, v[i].second);
-    sort(v.begin(), v.end());
+    sort(v.begin(), v.end(), [](const pair<int, int> &a, const pair<int, int> &b) {
+        return a.second<b.second;
+    });
     for (int i=0; i<min<int>(n, v.size()); i++)
-        cout << setfill('0') << setw(8) << v[i].second << '\n';
+        cout << setfill('0') << setw(8) << v[i].first << '\n';
 }
