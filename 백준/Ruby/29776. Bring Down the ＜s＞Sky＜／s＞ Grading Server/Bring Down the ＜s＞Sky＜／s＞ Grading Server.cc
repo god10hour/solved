@@ -2,8 +2,28 @@
 #define int int64_t
 using namespace std;
 
+template<class... Ts>
+struct Hash {
+    size_t operator()(const tuple<Ts...> &t) const {
+        size_t seed=0;
+        apply(
+            [&](const Ts &... xs) {
+                auto mix=[](uint64_t x) {
+                    x+=0x9e3779b97f4a7c15ULL;
+                    x=(x^x>>30)*0xbf58476d1ce4e5b9ULL;
+                    x=(x^x>>27)*0x94d049bb133111ebULL;
+                    return (x^x>>31);
+                };
+                ((seed^=mix(hash<Ts>{}(xs)+0x9e3779b97f4a7c15ULL+
+                    (seed<<6)+(seed>>2))), ...);
+            }, t
+        );
+        return seed;
+    }
+};
+
 int S, Q;
-map<array<int, 3>,int> dp;
+unordered_map<tuple<int, int, int>, int, Hash<int, int, int>> dp;
 int dfs(int a1, int b1, int a2, int b2) {
     if (a1>=a2 && b1>=b2) return 1;
     if (a1+b1*S<=0 || (a1<=0 && a2>=S) || b1<0) return 0;
@@ -71,25 +91,26 @@ int dfs(int a1, int b1, int a2, int b2) {
     if (w>=S*2) return z^1;
     w*=S-a2;
     if (w>=S*2) return z^1;
-    
-    if (!dp.count({b1, b2, a2})) {
+
+    auto key=make_tuple(b1, b2, a2);
+    auto it=dp.find(key);
+    if (it==dp.end()) {
         int L=0, U=S-1, mid, r=S;
         while (L<=U) {
             mid=(L+U)>>1;
             if (!dfs(a2, b2, mid+S, b1-1) ||
                 !dfs(a2-mid, b2, mid, b1))
-                r=mid, U=mid-1;
-            else L=mid+1;
+                r=mid,U=mid-1;
+            else  L=mid+1;
         }
-        dp[{b1, b2, a2}]=r;
+        it=dp.emplace(key, r).first;
     }
-    return z^dp[{b1, b2, a2}]<=a1;
+    return z^it->second<=a1;
 }
 
 int32_t main() {
     cin.tie(0)->sync_with_stdio(0);
     cin >> S >> Q;
-
     int a, b, c, d;
     while (Q--) {
         cin >> a >> b >> c >> d;
