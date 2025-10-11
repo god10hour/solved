@@ -1,31 +1,33 @@
 #include <bits/stdc++.h>
-#define int __int128
-#define float __float128
 using namespace std;
-float PI=3.1415926535897932384626Q;
+using Int=__int128;
+using Float=__float128;
+constexpr Float TAU=2.0L*3.1415926535897932384626433832795Q;
 
-float sine(float x) {
-    x-=int(x/PI)*PI;
-    float r=x, y=x, f=-x*x;
-    for (float d=2; d<30; d+=2)
-        r+=y*=f/(d*(d+1));
+Float sine(Float x) {
+    x-=Int(x/TAU)*TAU;
+    Float r=x, y=x;
+    const Float s=-x*x;
+    for (Float d=2; d<30; d+=2)
+        y*=s/(d*(d+1)), r+=y;
     return r;
 }
 
-int32_t main() {
-    PI*=2;
-    float A, B, C, l, r, x;
-    long double a, b, c;
-    cin >> a >> b >> c;
-    A=a, B=b, C=c;
-    float u=1000000, d=0.5;
-    l=(C-B)/A, r=(C+B)/A;
+signed main() {
+    cin.tie(0)->sync_with_stdio(0);
+    cout << fixed << setprecision(6);
+    Float a, b, c, l, r, x;
+    long double A, B, C;
+    const Float U=1e6;
+    cin >> A >> B >> C;
+    a=A, b=B, c=C;
+    l=(c-b)/a, r=(b+c)/a;
     int t=100;
     while (t--) {
         x=(l+r)/2;
-        float v=A*x+B*sine(x);
-        if (v<C) l=x;
+        if (a*x+b*sine(x)<C)
+            l=x;
         else r=x;
     }
-    cout << setprecision(6) << fixed << (long double)(int(u*r+d)/u);
+    cout << (long double)(Int(r*U+0.5)/U);
 }
