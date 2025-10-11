@@ -1,0 +1,1 @@
+int a[1<<20],i,j,k;main(n){for(scanf("%d",&n);i<1<<n;i++)scanf("%d",a+i);for(i=0;i<1<<n;i++)for(j=i;j;j&=j-1)for(k=i^(1<<n)-1;k;k&=k-1)if(a[i]+a[i^j&-j^k&-k]<a[i^j&-j]+a[i^k&-k])return!printf("%d %d",i,i^j&-j^k&-k);puts("-1");}
