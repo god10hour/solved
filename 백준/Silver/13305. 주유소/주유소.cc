@@ -12,7 +12,7 @@ int main() {
     for (int i=0; i<n; i++) cin >> cos[i];
     for (int i=0; i<n; i++) {
         c=min(c, cos[i]);
-        r+=c*dis[i];
+        r+=(int64_t)c*dis[i];
     }
     cout << r;
 }
