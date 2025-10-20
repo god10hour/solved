@@ -1,7 +1,8 @@
-#include <vector>
-long long sum(std::vector<int> &a) {
-	long long ans = 0;
-    for (int i=0; i<a.size(); i++)
-        ans+=a[i];
-	return ans;
+#include <bits/stdc++.h>
+using namespace std;
+
+int64_t sum(vector<int> &a) {
+	int64_t s=0;
+    for (int x: a) s+=x;
+    return s;
 }
