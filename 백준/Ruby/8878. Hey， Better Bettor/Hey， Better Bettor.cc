@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N=1e5;
+const int N=21000;
 long double power[N*2];
 
 long double pred(long double x, int a, int b) {
@@ -18,7 +18,7 @@ int main() {
     for (int i=1; i<N*2; i++) power[i]=p*power[i-1];
 
     int a=1, b=1;
-    while (a<=N) {
+    while (a<N) {
         long double z=pred(x, a, b);
         r=max(r, z);
         while (b<N) {
