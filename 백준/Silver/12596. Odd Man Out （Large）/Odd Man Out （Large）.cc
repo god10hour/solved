@@ -6,8 +6,7 @@ int main() {
     int T;
     cin >> T;
     for (int t=0; t<T; t++) {
-        int64_t r=0;
-        int n, k;
+        int n, k, r=0;
         cin >> n;
         for (int i=0; i<n; i++)
             cin >> k, r^=k;
