@@ -11,7 +11,8 @@ int main() {
     int n, x;
     int64_t r=0;
     cin >> n;
-    vector<int> C(N, 0), mu(N, 0);
+    vector<int> C(N, 0);
+    vector<char> mu(N, 0);
     mu[1]=1;
     for (int i=0; i<n; i++) cin >> x, C[x]++;
     for (int i=1; i<N; i++)
