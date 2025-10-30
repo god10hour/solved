@@ -1,0 +1,5 @@
+#include <bits/stdc++.h>
+#define I int64_t
+using namespace std;
+using V=vector<I>;
+const I M=786433,R=10,N=M-1,S=1<<18;I P(I n,I k){I r=1;while(k){if(k&1)r=r*n%M;n=n*n%M;k/=2;}return r;}void T(V&v){I s=v.size();for(I i=1,j=0;i<s;i++){I b=s/2;while(j>=b)j-=b,b/=2;j+=b;if(i<j)swap(v[i],v[j]);}for(I k=1;k<s;k*=2){I w=P(R,(M-1)/(k*2));for(I i=0;i<s;i+=k*2){I u=1;for(I j=0;j<k;j++){I c=i+j,a=v[c],b=v[c+k]*u%M;v[c]=(a+b)%M;v[c+k]=(a-b+M)%M;u=u*w%M;}}}}main(){cin.tie(0)->sync_with_stdio(0);I n,k,x,A=0;cin>>n;V f(n+1,0),e(N),l(M),w(N);for(I i=0;i<=n;i++)cin>>f[i];A=f[0];vector v(3, V(S, 0));for(I i=0;i<=n;i++)for(I j=0;j<3;j++)if(i%3==j)v[j][i/3]=f[i];for(I i=0;i<3;i++)T(v[i]);w[0]=1;for(I i=1;i<N;i++)w[i]=w[i-1]*R%M;for(I k=0;k<N;k++){I x=v[0][k%S],y=v[1][k%S],z=v[2][k%S],w3=w[k],w3p=w3*w3%M;e[k]=(x+w3*y+w3p*z)%M;}for(I i=0;i<N;i++)l[w[i]]=i;cin>>k;while(k--)cin>>x,cout<<(x?e[l[x]]:A)<<' ';}
