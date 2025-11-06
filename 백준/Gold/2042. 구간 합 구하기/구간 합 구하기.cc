@@ -62,9 +62,8 @@ public:
     }
 };
 
-template<typename Type>
 struct Add {
-    Type operator()(Type x, Type y) const {
+    int64_t operator()(int64_t x, int64_t y) const {
         return x+y;
     }
 };
@@ -75,9 +74,8 @@ int main() {
     cin >> n >> m >> k;
     vector<int64_t> v(n);
     for (int i=0; i<n; i++) cin >> v[i];
-    SegTree<int64_t, Add<int64_t>> tree(v);
+    SegTree<int64_t, Add> tree(v);
     m+=k;
-    int i=1;
     while (m--) {
         int64_t a, b, c;
         cin >> a >> b >> c;
