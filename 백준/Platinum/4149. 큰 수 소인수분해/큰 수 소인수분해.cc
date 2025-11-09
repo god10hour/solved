@@ -14,7 +14,7 @@ lint pow(__int128 n, __int128 k, lint mod) {
 }
 
 constexpr int base[]={
-    2, 3, 5, 7, 11, 13, 17
+    2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31
 };
 bool prime(lint n) {
     if (n<2) return 0;
