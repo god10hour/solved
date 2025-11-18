@@ -1,9 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include <bits/stdc++.h>
-using namespace std;
-
 template <typename Type>
 struct Poi {
     Type x, y;
@@ -31,7 +28,6 @@ struct Poi {
         return (d>0)-(d<0);
     }
 };
-
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
