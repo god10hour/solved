@@ -3,8 +3,7 @@ using namespace std;
 
 struct DSU {
     vector<int> p;
-    explicit DSU(int n=0) { init(n); }
-    void init(int n) { p.assign(n, -1); }
+    explicit DSU(int n=0) { p.assign(n, -1); }
 
     int find(int x) { return p[x]<0? x: p[x]=find(p[x]); }
     bool join(int x, int y) {
@@ -34,7 +33,8 @@ int main() {
     int V=v.size(), E=n*2, C=0;
     DSU dsu(V);
     for (int i=0; i<n; i++) {
-        int l=ranges::lower_bound(v, L[i])-v.begin(), r=ranges::lower_bound(v, R[i])-v.begin();
+        int l=ranges::lower_bound(v, L[i])-v.begin();
+        int r=ranges::lower_bound(v, R[i])-v.begin();
         dsu.join(l, r);
     }
     for (int i=0; i<V; i++) if (i==dsu.find(i)) C++;
