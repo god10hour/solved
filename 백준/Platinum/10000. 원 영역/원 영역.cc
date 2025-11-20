@@ -15,19 +15,18 @@ struct DSU {
         p[y]=x;
         return 1;
     }
-    int size(int x) { return -p[find(x)]; }
 };
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     int n;
     cin >> n;
-    vector<int> L(n), R(n), v;
+    vector<int> L(n), R(n), v(n*2);
     for (int i=0; i<n; i++) {
         int x, r;
         cin >> x >> r;
         L[i]=x-r, R[i]=x+r;
-        v.push_back(L[i]), v.push_back(R[i]);
+        v[i*2]=L[i], v[i*2+1]=R[i];
     }
     ranges::sort(v);
     v.erase(ranges::unique(v).begin(), v.end());
