@@ -34,8 +34,7 @@ int main() {
     int V=v.size(), E=n*2, C=0;
     DSU dsu(V);
     for (int i=0; i<n; i++) {
-        int l=ranges::lower_bound(v, L[i])-v.begin();
-        int r=ranges::lower_bound(v, R[i])-v.begin();
+        int l=ranges::lower_bound(v, L[i])-v.begin(), r=ranges::lower_bound(v, R[i])-v.begin();
         dsu.join(l, r);
     }
     for (int i=0; i<V; i++) if (i==dsu.find(i)) C++;
