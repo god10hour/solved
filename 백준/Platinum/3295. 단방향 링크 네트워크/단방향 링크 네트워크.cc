@@ -1,86 +1,66 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class FlowNetwork {
-public:
-    static constexpr int INF=1e9;
-    explicit FlowNetwork(size_t size, int source, int sink)
-        : source(source), sink(sink), adj(size), cur(size), level(size) {};
-    ~FlowNetwork() {
-        for (auto p : pool) delete p;
+// Bipartite Matching: O(√V*E)
+struct HopcroftKarp {
+    int Ln, Rn;
+    vector<vector<int>> g;
+    vector<int> dist;
+    vector<int> Lmatch, Rmatch;
+
+    explicit HopcroftKarp(int Ln, int Rn): Ln(Ln), Rn(Rn), g(Ln) {
+        dist.resize(Ln);
+        Lmatch.assign(Ln, -1);
+        Rmatch.assign(Rn, -1);
     }
 
-    void add(int from, int to, int wei) {
-        Edge *e=new Edge(to, wei);
-        Edge *rev=new Edge(from, 0);
-        pool.push_back(e);
-        pool.push_back(rev);
-        e->rev=rev, rev->rev=e;
-        adj[from].push_back(e);
-        adj[to].push_back(rev);
+    void add(int u, int v) {
+        g[u].push_back(v);
     }
 
-    int get() {
-        int maxflow=0;
-        while (build()) {
-            fill(cur.begin(), cur.end(), 0);
-            int f;
-            while ((f=push(source, INF)))
-                maxflow+=f;
-        }
-        return maxflow;
-    }
-
-private:
-    struct Edge {
-        Edge *rev=nullptr;
-        int to, cap, flow;
-        explicit Edge(int to, int cap): to(to), cap(cap), flow(0) {}
-
-        void push(int v) {
-            flow+=v;
-            rev->flow-=v;
-        }
-
-        int r_capacity() const { return cap-flow; }
-    };
-    int source=0, sink=0;
-    vector<vector<Edge*>> adj;
-    vector<Edge*> pool;
-    vector<int> cur, level;
-
-    bool build() {
-        fill(level.begin(), level.end(), -1);
-        level[source]=0;
+    bool bfs() {
         queue<int> q;
-        q.push(source);
+        bool reachable=false;
 
+        for (int u=0; u<Ln; u++)
+            if (Lmatch[u]==-1)
+                dist[u]=0, q.push(u);
+            else dist[u]=-1;
         while (!q.empty()) {
-            const int u=q.front(); q.pop();
-
-            for (const Edge *e: adj[u]) {
-                if (level[e->to]!=-1 || e->r_capacity()==0)
-                    continue;
-                level[e->to]=level[u]+1;
-                q.push(e->to);
+            int u=q.front(); q.pop();
+            for (int v: g[u]) {
+                int u2=Rmatch[v];
+                if (u2!=-1 && dist[u2]==-1) {
+                    dist[u2]=dist[u]+1;
+                    q.push(u2);
+                }
+                if (u2==-1)
+                    reachable=true;
             }
         }
-        return level[sink]!=-1;
+        return reachable;
     }
 
-    int push(int u, int flow) {
-        if (u==sink) return flow;
-        for (int &i=cur[u]; i<adj[u].size(); i++) {
-            Edge *e=adj[u][i];
-
-            if (level[e->to]!=level[u]+1 || e->r_capacity()==0)
-                continue;
-            if (int f=push(e->to, min(flow, e->r_capacity()))) {
-                e->push(f);
-                return f;
+    bool dfs(int u) {
+        for (int v: g[u]) {
+            int u2=Rmatch[v];
+            if (u2==-1 || (dist[u2]==dist[u]+1 && dfs(u2))) {
+                Lmatch[u]=v;
+                Rmatch[v]=u;
+                return true;
             }
         }
-        return 0;
+        dist[u]=-1;
+        return false;
+    }
+
+    int max() {
+        int m=0;
+        while (bfs())
+            for (int u=0; u<Ln; u++)
+                if (Lmatch[u]==-1 && dfs(u))
+                    m++;
+        return m;
     }
 };
 
@@ -91,16 +71,12 @@ int main() {
     while (t--) {
         int n, m;
         cin >> n >> m;
-        FlowNetwork dinic(n*2+2, n*2, n*2+1);
-        for (int i=0; i<n; i++) {
-            dinic.add(n*2, i, 1);
-            dinic.add(n+i, n*2+1, 1);
-        }
+        HopcroftKarp BM(n, n);
         while (m--) {
             int u, v;
             cin >> u >> v;
-            dinic.add(u, n+v, 1);
+            BM.add(u, v);
         }
-        cout << dinic.get() << '\n';
+        cout << BM.max() << '\n';
     }
 }
