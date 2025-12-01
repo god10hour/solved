@@ -9,13 +9,13 @@ int main() {
     vector<lint> v(n);
     for (lint &x: v) cin >> x;
     vector<lint> g, P;
-    bitset<40000> sieve;
+    bitset<30000> sieve;
     set<lint> div;
     sieve.set();
     sieve[0]=sieve[1]=0;
-    for (lint i=2; i<40000; i++) if (sieve[i]) {
+    for (lint i=2; i<30000; i++) if (sieve[i]) {
         P.push_back(i);
-        for (lint j=i*i; j<40000; j+=i) sieve[j]=0;
+        for (lint j=i*i; j<30000; j+=i) sieve[j]=0;
     }
 
     for (lint x: v) {
