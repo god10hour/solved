@@ -9,8 +9,9 @@ int main() {
     vector<lint> v(n);
     for (lint &x: v) cin >> x;
     vector<lint> g, P;
-    vector<bool> sieve(50000, 1);
+    bitset<50000> sieve;
     set<lint> div;
+    sieve.set();
     sieve[0]=sieve[1]=0;
     for (lint i=2; i<50000; i++) if (sieve[i]) {
         P.push_back(i);
