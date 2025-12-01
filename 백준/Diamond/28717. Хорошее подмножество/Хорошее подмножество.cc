@@ -2,120 +2,39 @@
 using namespace std;
 using lint=uint64_t;
 
-lint pow(__int128 n, __int128 k, lint mod) {
-    __int128 r=1;
-    while (k) {
-        if (k&1)
-            r=r*n%mod;
-        n=n*n%mod;
-        k/=2;
-    }
-    return r;
-}
-
-constexpr lint base[] {
-    2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37
-};
-bool prime(lint n) {
-    if (n<2) return 0;
-    for (int p: base)
-        if (n%p==0)
-            return n==p;
-    lint d=n-1;
-    int s=__builtin_ctzll(d);
-    d>>=s;
-
-    auto f=[&](lint a)->bool {
-        if (a%n==0) return 1;
-        lint x=pow(a, d, n);
-        if (x==1 || x==n-1) return 1;
-        for (int r=1; r<s; r++) {
-            x=(__int128)x*x%n;
-            if (x==n-1) return 1;
-            if (x==1) return 0;
-        }
-        return 0;
-    };
-
-    for (lint a: base) if (!f(a))
-        return 0;
-    return 1;
-}
-
-lint div(lint n) {
-    if ((n&1)==0) return 2;
-    if (prime(n)) return n;
-
-    while (1) {
-        lint c=rand()%n;
-        lint y=rand()%(n-3)+2;
-        lint m=256;
-        auto step=[&](lint x)->lint {
-            return ((__int128)x*x+c)%n;
-        };
-
-        lint d=1, r=1, q=1;
-        while (d==1) {
-            lint x=y;
-            for (lint i=0; i<r; i++)
-                y=step(y);
-
-            lint k=0;
-            while (k<r && d==1) {
-                lint lim=min(m, r-k);
-                for (lint i=0; i<lim; i++) {
-                    y=step(y);
-                    q=(__int128)q*llabs(x-y)%n;
-                }
-                d=gcd(q, n);
-                k+=lim;
-            }
-            r<<=1;
-        }
-        if (d==n) {
-            lint x=y;
-            do {
-                x=step(x);
-                d=gcd(llabs(x-y), n);
-            } while (d==1);
-        }
-        if (d!=n) return d;
-    }
-}
-
-static void fact(lint n, vector<lint> &r) {
-    if (n==1) return;
-    if (prime(n)) {
-        r.push_back(n);
-        return;
-    }
-    lint d=div(n);
-    fact(d, r);
-    fact(n/d, r);
-}
-
-vector<lint> factor(lint n) {
-    vector<lint> r;
-    for (int p: base)
-        while (n%p==0)
-            r.push_back(p), n/=p;
-    if (n>1) fact(n, r);
-    ranges::sort(r);
-    r.erase(ranges::unique(r).begin(), r.end());
-    return r;
-}
-
 int main() {
     cin.tie(0)->sync_with_stdio(0);
     int n, r=0;
     cin >> n;
-    unordered_map<lint, int> cnt;
-    for (int i=0; i<n; i++) {
-        lint k;
-        cin >> k;
-        auto a=factor(k);
-        for (lint x: a) cnt[x]++;
+    vector<lint> v(n);
+    for (lint &x: v) cin >> x;
+    vector<lint> g, P;
+    vector<bool> sieve(50000, 1);
+    set<lint> div;
+    sieve[0]=sieve[1]=0;
+    for (lint i=2; i<50000; i++) if (sieve[i]) {
+        P.push_back(i);
+        for (lint j=i*i; j<50000; j+=i) sieve[j]=0;
     }
-    for (auto [k, v]: cnt) r=max(r, v);
+
+    for (lint x: v) {
+        for (lint &p: P) {
+            if (x%p==0) {
+                div.insert(p);
+                while (x%p==0) x/=p;
+            }
+            if (x<p) break;
+        }
+        g.push_back(x);
+        div.insert(x);
+    }
+    for (int i=0; i<g.size(); i++)
+        for (int j=i+1; j<g.size(); j++)
+            div.insert(gcd<lint>(g[i], g[j]));
+    for (auto &d: div) if (d!=1) {
+        int k=0;
+        for (lint &x: v) if (x%d==0) k++;
+        r=max(r, k);
+    }
     cout << r << '\n';
 }
