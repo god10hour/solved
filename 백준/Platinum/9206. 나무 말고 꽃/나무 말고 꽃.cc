@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-constexpr double EPS=1e-6;
+constexpr double EPS=1e-4;
 
 double func(double a, double b, double x) {
     double r=a*exp(-x*x)+b*sqrt(x);
