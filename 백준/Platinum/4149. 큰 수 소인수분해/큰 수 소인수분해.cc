@@ -49,7 +49,7 @@ lint div(lint n) {
     while (1) {
         lint c=rand()%n;
         lint y=rand()%(n-3)+2;
-        lint m=1+(n&63);
+        lint m=256;
         auto step=[&](lint x)->lint {
             return ((__int128)x*x+c)%n;
         };
@@ -98,7 +98,7 @@ vector<lint> factor(lint n) {
     vector<lint> r;
     for (int p: base)
         while (n%p==0)
-            r.push_back(p),n/=p;
+            r.push_back(p), n/=p;
     if (n>1) _fact(n, r);
     sort(r.begin(), r.end());
     return r;
