@@ -1,12 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
-using lint=uint64_t;
+using lint=int64_t;
 
 lint pow(__int128 n, __int128 k, lint mod) {
     __int128 r=1;
     while (k) {
-        if (k&1)
-            r=r*n%mod;
+        if (k&1) r=r*n%mod;
         n=n*n%mod;
         k/=2;
     }
@@ -42,13 +41,14 @@ bool prime(lint n) {
     return 1;
 }
 
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 lint div(lint n) {
     if ((n&1)==0) return 2;
     if (prime(n)) return n;
 
     while (1) {
-        lint c=rand()%n;
-        lint y=rand()%(n-3)+2;
+        lint c=uniform_int_distribution<lint>(0, n-1)(rng);
+        lint y=uniform_int_distribution<lint>(2, n-2)(rng);
         lint m=256;
         auto step=[&](lint x)->lint {
             return ((__int128)x*x+c)%n;
@@ -83,15 +83,15 @@ lint div(lint n) {
     }
 }
 
-static void _fact(lint n, vector<lint> &r) {
+static void fact(lint n, vector<lint> &r) {
     if (n==1) return;
     if (prime(n)) {
         r.push_back(n);
         return;
     }
     lint d=div(n);
-    _fact(d, r);
-    _fact(n/d, r);
+    fact(d, r);
+    fact(n/d, r);
 }
 
 vector<lint> factor(lint n) {
@@ -99,7 +99,7 @@ vector<lint> factor(lint n) {
     for (int p: base)
         while (n%p==0)
             r.push_back(p), n/=p;
-    if (n>1) _fact(n, r);
+    if (n>1) fact(n, r);
     sort(r.begin(), r.end());
     return r;
 }
@@ -109,5 +109,5 @@ int main() {
     lint n;
     cin >> n;
     auto a=factor(n);
-    for (auto x: a) cout << x << '\n';
+    for (const auto &x: a) cout << x << '\n';
 }
