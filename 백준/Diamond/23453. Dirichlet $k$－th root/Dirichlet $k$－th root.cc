@@ -62,9 +62,8 @@ using Z=Mint<998244353>;
 
 constexpr int N=1e6;
 Z f[N+5], g[N+5];
-
-int lp[N+5], prs[N+5], pc;
-int om[N+5];
+int lp[N+5], prs[80005], pc;
+uint8_t om[N+5];
 Z invs[32];
 
 int init(int n) {
@@ -83,13 +82,13 @@ int init(int n) {
             lp[v]=p, om[v]=om[i]+1;
             if (p==lp[i]) break;
         }
-        M=max(M, om[i]);
+        M=max(M, (int)om[i]);
     }
     return M;
 }
 
 void lnO(Z *a, int n) {
-    for (int i=1; i<=n; i++) g[i-1]=a[i-1]*Z(om[i]);
+    for (int i=1; i<=n; i++) g[i-1]=a[i-1]*Z((int)om[i]);
     for (int i=1; i<=n; i++) {
         for (int j=2; 1LL*i*j<=n; j++)
             g[i*j-1]-=g[i-1]*a[j-1];
@@ -101,7 +100,7 @@ void lnO(Z *a, int n) {
 void expO(Z *a, int n) {
     g[0]=Z(1);
     for (int i=1; i<n; i++) g[i]=Z(0);
-    for (int i=1; i<=n; i++) a[i-1]*=Z(om[i]);
+    for (int i=1; i<=n; i++) a[i-1]*=Z((int)om[i]);
     for (int i=1; i<=n; i++) {
         if (i>1) g[i-1]*=invs[om[i]];
         for (int j=2; 1LL*i*j<=n; j++)
