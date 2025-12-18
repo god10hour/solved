@@ -62,33 +62,32 @@ using Z=Mint<998244353>;
 
 constexpr int N=1e6;
 Z f[N+5], g[N+5];
-int lp[N+5], prs[80005], pc;
+int prs[80005], pc;
 uint8_t om[N+5];
 Z invs[32];
+bitset<N+5> sieve;
 
 int init(int n) {
-    om[1]=0;
+    sieve.set();
+    sieve[0]=sieve[1]=0;
+    for (int i=2; 1LL*i*i<=n; i++) if (sieve[i])
+        for (int j=i*i; j<=n; j+=i) sieve[j]=0;
+    pc=0;
+    for (int i=2; i<=n; i++) if (sieve[i]) prs[pc++]=i;
     int M=0;
-    for (int i=2; i<=n; i++) {
-        if (!lp[i]) {
-            lp[i]=i;
-            prs[pc++]=i;
-            om[i]=1;
+    for (int t=0; t<pc; t++) {
+        int p=prs[t];
+        for (int x=p; x<=n; x+=p) {
+            int y=x;
+            while (y%p==0) om[x]++, y/=p;
         }
-        for (int j=0; j<pc; j++) {
-            int p=prs[j];
-            int64_t v=1LL*i*p;
-            if (v>n) break;
-            lp[v]=p, om[v]=om[i]+1;
-            if (p==lp[i]) break;
-        }
-        M=max(M, (int)om[i]);
     }
+    for (int i=2; i<=n; i++) M=max<int>(M, om[i]);
     return M;
 }
 
 void lnO(Z *a, int n) {
-    for (int i=1; i<=n; i++) g[i-1]=a[i-1]*Z((int)om[i]);
+    for (int i=1; i<=n; i++) g[i-1]=a[i-1]*Z(om[i]);
     for (int i=1; i<=n; i++) {
         for (int j=2; 1LL*i*j<=n; j++)
             g[i*j-1]-=g[i-1]*a[j-1];
