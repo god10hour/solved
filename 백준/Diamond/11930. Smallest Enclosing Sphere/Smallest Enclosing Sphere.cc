@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ldb=long double;
 
 template<typename Type>
 struct Vec {
