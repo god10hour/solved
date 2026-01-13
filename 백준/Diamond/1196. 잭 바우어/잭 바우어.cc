@@ -55,8 +55,7 @@ lodb tail_sum(lint n, lint k) {
     }
     if (m<=3'000'000)
         return harmonic(n)-harmonic_small(m);
-
-    lodb N=lodb(n), M=lodb(m);
+    
     array<lodb, 8> invn{}, invm{};
     invn[0]=1.0L/n, invn[1]=invn[0]*invn[0];
     for (int i=2; i<8; i++)
@@ -65,7 +64,7 @@ lodb tail_sum(lint n, lint k) {
     for (int i=2; i<8; i++)
         invm[i]=invm[1]*invm[i-1];
 
-    lodb r=log1pl(k/M);
+    lodb r=log1pl(lodb(k)/m);
     int d=1;
     for (int i=0; i<8; i++)
         r+=d*(invn[i]-invm[i])/coef[i], d*=-1;
