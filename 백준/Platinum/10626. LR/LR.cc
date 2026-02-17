@@ -62,7 +62,7 @@ int main() {
                     } else if (fx=='R') {
                         if (better(right, loc)) loc=right;
                     } else { // '?'
-                        string cand=better(left, right)? left: right;
+                        cand=better(left, right)? left: right;
                         if (better(cand, loc)) loc=cand;
                     }
                 }
