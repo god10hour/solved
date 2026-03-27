@@ -3,29 +3,25 @@ using namespace std;
 constexpr int N=1e5+1;
 
 vector<int> prime;
-vector<vector<int>> poly_cache(N);
+unordered_map<int, vector<int>> poly_cache;
 array<int, N> spf, phi;
-array<char, N> mu;
 
 void sieve() {
-    phi[1]=mu[1]=1;
+    phi[1]=1;
     for (int i=2; i<N; i++) {
         if (!spf[i]) {
             spf[i]=i;
             prime.emplace_back(i);
             phi[i]=i-1;
-            mu[i]=-1;
         }
         for (int &p: prime) {
             if (1LL*i*p>=N) break;
             spf[p*i]=p;
             if (i%p==0) {
                 phi[p*i]=p*phi[i];
-                mu[p*i]=0;
                 break;
             }
             phi[p*i]=phi[i]*(p-1);
-            mu[p*i]=-mu[i];
         }
     }
 }
@@ -68,7 +64,7 @@ void enum_divisors(
 }
 
 const vector<int> &get_poly(int n) {
-    if (!poly_cache[n].empty()) return poly_cache[n];
+    if (auto it=poly_cache.find(n); it!=poly_cache.end()) return it->second;
     if (n==1) return poly_cache[1]={-1, 1};
 
     int deg=phi[n];
