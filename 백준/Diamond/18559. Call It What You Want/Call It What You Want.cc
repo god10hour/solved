@@ -129,10 +129,12 @@ int main() {
     int t;
     cin >> t;
     while (t--) {
-        int n;
+        int n, c=1;
         cin >> n;
         auto fac=factorize_full(n);
+        for (auto &[p, e]: fac) c*=e+1;
         vector<int> divs;
+        divs.reserve(c);
         enum_divisors(0, 1, fac, divs);
         ranges::sort(divs, by_order);
         string r;
