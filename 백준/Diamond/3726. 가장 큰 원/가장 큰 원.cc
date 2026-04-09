@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-using rea=long double;
+using rea=double;
 constexpr rea eps=1e-12L;
 
 struct Seg {
