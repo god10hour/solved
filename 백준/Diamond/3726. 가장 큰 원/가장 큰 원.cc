@@ -38,14 +38,14 @@ bool feasible(const vector<Seg> &a, rea L, rea r) {
         rea hi=max(s.ax, s.bx)+r;
 
         rea ll=lo, rr=x0;
-        for (int i=0; i<70; i++) {
+        for (int i=0; i<48; i++) {
             rea mid=(ll+rr)/2;
             (dist(s, mid)<r? rr: ll)=mid;
         }
         rea left=rr;
 
         ll=x0, rr=hi;
-        for (int i=0; i<70; i++) {
+        for (int i=0; i<48; i++) {
             rea mid=(ll+rr)/2;
             (dist(s, mid)<r? ll: rr)=mid;
         }
@@ -78,7 +78,7 @@ int main() {
         for (auto &[ax, ay, bx, by]: pts) cin >> ax >> ay >> bx >> by;
 
         rea l=0, r=40000;
-        for (int i=0; i<70; i++) {
+        for (int i=0; i<48; i++) {
             rea mid=(l+r)/2;
             (feasible(pts, L, mid)? l: r)=mid;
         }
