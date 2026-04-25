@@ -3,7 +3,7 @@ using namespace std;
 constexpr int N=300;
 int n;
 
-int det_mod2(vector<bitset<N>> a, int m) {
+int determinant(vector<bitset<N>> a, int m) {
     int rank=0;
     for (int c=0; c<m; c++) {
         int piv=-1;
@@ -55,7 +55,7 @@ bool kernel_basis(const vector<bitset<N>> &rows, bitset<N> &x, bitset<N> &y) {
     return true;
 }
 
-int duplicate_term(const vector<bitset<N>> &org, int idx) {
+int duplicate(const vector<bitset<N>> &org, int idx) {
     vector<bitset<N>> rows;
     bitset<N> u=org[idx], x, y, z;
 
@@ -81,7 +81,7 @@ int main() {
             cin >> s;
             for (int j=0; j<n; j++) if (s[j]=='1') org[i].set(j);
         }
-        if (det_mod2(org, n)) {
+        if (determinant(org, n)) {
             cout << "NO\n";
             continue;
         }
@@ -128,8 +128,8 @@ int main() {
         for (int j=0; j<n; j++) if (cnt[j]>>1&1) half.set(j);
 
         a=org, a[0]=half;
-        int k=det_mod2(a, n)<<1;
-        for (int i=1; i<n; i++) if (dep[i]) k=k+duplicate_term(org, i)&3;
+        int k=determinant(a, n)<<1;
+        for (int i=1; i<n; i++) if (dep[i]) k=k+duplicate(org, i)&3;
         cout << (k==0? "YES": "NO") << '\n';
     }
 }
